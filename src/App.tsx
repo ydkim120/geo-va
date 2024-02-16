@@ -13,7 +13,7 @@ function App() {
       ) : (
         'Initializing...'
       )}
-      <footer>
+      <footer className='absolute bottom-0 left-0 right-0'>
         &copy;
         {new Date().getFullYear()}
         {' '}

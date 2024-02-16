@@ -12,7 +12,7 @@ function AppHeader() {
     else setTheme('dark');
   };
   return (
-    <header className="flex items-center justify-between py-[10px] px-[20px]">
+    <header className="flex items-center justify-between py-[20px] px-[30px] text-2xl font-bold">
       <h1>GeoVa</h1>
 
       <div className="flex items-center justify-between gap-[10px]">
