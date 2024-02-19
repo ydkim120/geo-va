@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import NaverMaps from '../components/NaverMaps.tsx';
+import NaverMaps from '@/components/NaverMaps.tsx';
+import FindLocationForm from '@/components/FindLocationForm.tsx';
 import {
   Drawer,
   DrawerClose,
@@ -25,6 +26,7 @@ function MapMain() {
 
       <Drawer>
         <div className="added-users__wrap">
+          <h3 className="added-users__title">친구들 위치🎈</h3>
           <ul className="added-users__list">
             <li className="added-users__item">
               test
@@ -38,14 +40,21 @@ function MapMain() {
 
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-            <DrawerDescription>This action cannot be undone.</DrawerDescription>
+            <DrawerTitle>친구 위치 추가</DrawerTitle>
+            <DrawerDescription>만날 친구를 추가하세요.</DrawerDescription>
           </DrawerHeader>
-          <DrawerFooter>
-            <Button>Submit</Button>
+
+          <ul className="positions__list">
+            <li className="positions__item">
+              <FindLocationForm />
+            </li>
+          </ul>
+
+          <DrawerFooter className="flex flex-row items-center">
             <DrawerClose>
               Cancel
             </DrawerClose>
+            <Button>완료</Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
