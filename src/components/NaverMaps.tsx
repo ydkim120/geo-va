@@ -1,18 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Container as MapDiv, NaverMap, Marker, useNavermaps,
-} from 'react-naver-maps';
+import { Suspense, useState, useEffect } from 'react'
+import { Container as MapDiv, NaverMap, useNavermaps, NavermapsProvider, Marker } from 'react-naver-maps'
 import { Skeleton } from '@/components/ui/skeleton.tsx';
+import useMapsListenerEvent from '@/hooks/useMapsListenerEvent';
 
-const naverMaps = useNavermaps();
+interface propTypes {
+  mapWidth?: string;
+  mapHeight?: string;
+  latitude: number;
+  longitude: number;
+  isMarker?: boolean;
+  markerLatitude?: number;
+  markerLongitude?: number;
+  defaultZoom?: number;
+}
 
-// const loadScript = (src: string, callback?: () => void) => {
-//   const script = document.createElement('script');
-//   script.type = 'text/javascript';
-//   script.src = src;
-//   if (callback) script.onload = () => callback();
-//   document.head.appendChild(script);
-// };
+function Call() {
+  const navermaps = useNavermaps()
+  console.log(navermaps)
+  return null;
+}
 
 function NaverMaps({
   mapWidth, // 맵 너비
@@ -23,34 +29,61 @@ function NaverMaps({
   markerLatitude, // 마커 위도
   markerLongitude, // 마커 경도
   defaultZoom, // zoom 배율
-}: {
-  mapWidth?: string;
-  mapHeight?: string;
-  latitude: number;
-  longitude: number;
-  isMarker?: boolean;
-  markerLatitude?: number;
-  markerLongitude?: number;
-  defaultZoom?: number;
-}) {
-  // 지도 로딩 상태
-  const [isMapLoaded, setMapLoaded] = useState(false);
+}: propTypes) {
+  const naverMaps = useNavermaps();
+  const [nMap, setNMap] = useState(null)
+
+  /**
+   * 지도 클릭 시 > 클릭한 곳의 위치 정보를 가져옵니다.
+   * 
+   */
+  const onClickGetPosition = (latlng: naverMaps.LatLng, nmap: naverMaps.Map) => {
+    const { naver } = window;
+    // infoWindow 생성
+    naver.maps.Service.reverseGeocode(
+      {
+        coords: latlng,
+        orders: [naver.maps.Service.OrderType.ADDR, naver.maps.Service.OrderType.ROAD_ADDR].join(','),
+      },
+      (
+        status: naver.maps.Service.Status,
+        response: naver.maps.Service.ReverseGeocodeResponse,
+      ) => {
+        if (status !== naver.maps.Service.Status.OK) {
+          return alert('Something went wrong!');
+        }
+
+        const address = response.v2.address.roadAddress
+          ? response.v2.address.roadAddress
+          : response.v2.address.jibunAddress;
+
+        return {coords: latlng, maps: nmap}
+      }
+    );
+  }
+
+  useMapsListenerEvent(nMap, 'click', (e) => {
+    alert(e.coord); // 클릭한 지점 좌표
+    onClickGetPosition()
+  })
 
   useEffect(() => {
-    // loadScript(
-    //   'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=wxm74y5h9u',
-    // );
-    setMapLoaded(true);
-  }, [latitude, longitude]);
+    // if (naverMaps) 
+    const { naver } = window;
+    if (naver) {
+      const nmap = naver.maps.Map;
+      setNMap(nmap)
+    }
+  }, [naverMaps]);
 
   return (
     <>
       {/* 위치 정보(지도) */}
       <div className="mb-8 mt-40 flex w-screen flex-col items-center">
-        <span className="sm:text-md font-Pretendard text-sm font-bold text-[#06439F] md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">
-          위치 안내
-        </span>
-        {isMapLoaded ? (
+        <Suspense fallback={<Skeleton className="h-[125px] w-[250px] rounded-xl" />}>
+          <Call />
+        </Suspense>
+        <NavermapsProvider ncpClientId='wxm74y5h9u'>
           <MapDiv
             style={{
               width: mapWidth,
@@ -71,9 +104,7 @@ function NaverMaps({
               )}
             </NaverMap>
           </MapDiv>
-        ) : (
-          <Skeleton className="h-[125px] w-[250px] rounded-xl" />
-        )}
+        </NavermapsProvider>
       </div>
     </>
   );

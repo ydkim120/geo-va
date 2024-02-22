@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import NaverMaps from '@/components/NaverMaps.tsx';
-import FindLocationForm from '@/components/FindLocationForm.tsx';
+import SetLocationField from '@/components/SetLocationField.tsx';
 import {
   Drawer,
   DrawerClose,
@@ -33,7 +33,7 @@ function MapMain() {
             </li>
           </ul>
           <DrawerTrigger asChild>
-            <Button variant="outline" className="added-users__trigger">친구 추가하기</Button>
+            <Button className="added-users__trigger">친구 추가하기</Button>
           </DrawerTrigger>
 
         </div>
@@ -46,15 +46,15 @@ function MapMain() {
 
           <ul className="positions__list">
             <li className="positions__item">
-              <FindLocationForm />
+              <SetLocationField />
             </li>
           </ul>
 
-          <DrawerFooter className="flex flex-row items-center">
+          <DrawerFooter className="flex flex-row items-center justify-center gap-[10px]">
             <DrawerClose>
-              Cancel
+              취소
             </DrawerClose>
-            <Button>완료</Button>
+            <Button>적용</Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
